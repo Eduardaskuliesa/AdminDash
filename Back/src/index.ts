@@ -5,7 +5,8 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 // Route IMPORTS
-import dashboardRoutes from './routes/dashboardRoutes'
+import dashboardRoutes from "./routes/dashboardRoutes";
+import authRoutes from "./routes/authRoutes";
 
 // CONFIGURATIONS
 dotenv.config();
@@ -19,7 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 //ROUTES
-app.use('/dashboard', dashboardRoutes) 
+app.use("/dashboard", dashboardRoutes);
+app.use("/", authRoutes);
 
 //SERVER
 
