@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const RegisterFormLogin = () => {
@@ -14,12 +15,12 @@ const RegisterFormLogin = () => {
       <p className="text-base md:text-lg mb-6 md:mb-8 text-center relative z-10 px-4">
         Log in to access your account and enjoy our services
       </p>
-      <a
+      <Link
         href="/login"
         className="py-2 md:py-3 px-6 md:px-8 bg-white text-red-700 rounded-full w-auto text-center text-lg md:text-xl font-semibold hover:bg-gray-100 transition duration-300 relative z-10 shadow-lg"
       >
         Login Now
-      </a>
+      </Link>
     </div>
   );
 };
