@@ -1,5 +1,5 @@
 "use client";
-import React, { EventHandler, FormEvent, useState } from "react";
+import React, { useState } from "react";
 import {
   FaUser,
   FaLock,

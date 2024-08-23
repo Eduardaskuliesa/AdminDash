@@ -2,11 +2,14 @@
 import React, { useState } from "react";
 import { FaUser, FaLock, FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 import { useLoginMutation } from "@/state/authApi";
+import { useAppDispatch, useAppSelector } from "@/app/redux";
+import { setIsLoggedIn } from "@/state";
 
 export const LoginFormFields = () => {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
+  const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -27,7 +30,7 @@ export const LoginFormFields = () => {
         password: formData.password,
       }).unwrap();
 
-      
+      dispatch(setIsLoggedIn(true));
       console.log("Logged in successfully", result);
     } catch (error) {
       setErrorMsg("Invalid email or password. Please try again.");
@@ -90,7 +93,9 @@ export const LoginFormFields = () => {
         <p className="text-red-500 text-sm text-center mb-2">{errorMsg}</p>
       )}
       {isSuccess && (
-        <p className="text-green-500 text-sm text-center mb-2">Succesfull Login</p>
+        <p className="text-green-500 text-sm text-center mb-2">
+          Succesfull Login
+        </p>
       )}
       <button
         type="submit"

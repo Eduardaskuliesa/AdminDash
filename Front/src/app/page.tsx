@@ -1,10 +1,7 @@
 import Image from "next/image";
-import LoginForm from "./components/Login/LoginForm";
+import LoginForm from "./(components)/Login/LoginForm";
+import Dashboard from "./dashboard/page";
 
 export default function Home() {
-  return (
-    <main className="h-[100vh] flex justify-center items-center">
-      <LoginForm></LoginForm>
-    </main>
-  );
+  return <Dashboard></Dashboard>;
 }
