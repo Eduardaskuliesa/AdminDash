@@ -15,7 +15,7 @@ type ExpenseSummery = {
 const CardExpenseSummary = () => {
   const { data: dashboardMetrics, isLoading } = useGetDashboardMetricsQuery();
 
-  const expenseSummary = dashboardMetrics?.expenseSummary[0];
+  const expenseSummary = dashboardMetrics?.expenseSummary?.length > 0 ? dashboardMetrics.expenseSummary[0] : null;
 
   const expenseByCategorySummary =
     dashboardMetrics?.expenseByCategorySummary || [];

@@ -2,7 +2,7 @@ import { useGetDashboardMetricsQuery } from "@/state/productApi";
 import { TrendingUp } from "lucide-react";
 import React, { useState } from "react";
 import {
-  Bar,
+  Bar,  
   BarChart,
   CartesianGrid,
   ResponsiveContainer,

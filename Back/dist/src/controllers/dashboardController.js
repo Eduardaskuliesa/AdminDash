@@ -14,46 +14,69 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getDashboardMetrics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const totalSales = yield prisma.orders.aggregate({
+            _sum: {
+                totalAmount: true,
+            },
+        });
+        const totalOrders = yield prisma.orders.count();
+        const totalUsers = yield prisma.users.count();
+        const conversionRate = totalUsers > 0 ? (totalOrders / totalUsers) * 100 : 0;
         const popularProducts = yield prisma.products.findMany({
-            take: 15,
+            take: 10,
             orderBy: {
-                stockQuantity: "desc",
+                orderItems: {
+                    _count: "desc",
+                },
+            },
+            include: {
+                _count: {
+                    select: { orderItems: true },
+                },
             },
         });
-        const salesSummary = yield prisma.salesSummary.findMany({
+        const recentSales = yield prisma.orders.findMany({
             take: 5,
             orderBy: {
-                date: "desc",
+                createdAt: "desc",
+            },
+            include: {
+                user: true,
             },
         });
-        const purchaseSummary = yield prisma.purchaseSummary.findMany({
-            take: 5,
-            orderBy: {
-                date: "desc",
+        const salesByCategory = yield prisma.categories.findMany({
+            include: {
+                products: {
+                    include: {
+                        orderItems: true,
+                    },
+                },
             },
         });
-        const expenseSummary = yield prisma.expenseSummary.findMany({
-            take: 5,
-            orderBy: {
-                date: "desc",
-            },
+        const simplifiedSalesByCategory = salesByCategory.map((category) => {
+            const totalSales = category.products.reduce((categoryTotal, product) => {
+                const productTotal = product.orderItems.reduce((productTotal, item) => {
+                    return productTotal + Number(item.price) * item.quantity;
+                }, 0);
+                return categoryTotal + productTotal;
+            }, 0);
+            return {
+                category: category.name,
+                totalSales: Number(totalSales.toFixed(2)),
+            };
         });
-        const expenseByCategorySummaryRaw = yield prisma.expenseByCategory.findMany({
-            take: 5,
-            orderBy: {
-                date: "desc",
-            },
-        });
-        const expenseByCategorySummary = expenseByCategorySummaryRaw.map((item) => (Object.assign(Object.assign({}, item), { amount: item.amount.toString() })));
         res.json({
+            totalSales: totalSales._sum.totalAmount || 0,
+            totalOrders,
+            totalUsers,
+            conversionRate,
+            salesByCategory: simplifiedSalesByCategory,
             popularProducts,
-            salesSummary,
-            purchaseSummary,
-            expenseSummary,
-            expenseByCategorySummary,
+            recentSales,
         });
     }
     catch (error) {
+        console.error("Error retrieving dashboard metrics:", error);
         res.status(500).json({ message: "Error retrieving dashboard metrics" });
     }
 });

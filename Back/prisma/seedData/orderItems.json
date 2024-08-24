@@ -1,0 +1,23 @@
+[
+  {
+    "id": "b47ac10b-58cc-4372-a567-0e02b2c3d484",
+    "orderId": "e47ac10b-58cc-4372-a567-0e02b2c3d481",
+    "productId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "quantity": 1,
+    "price": 1299.99
+  },
+  {
+    "id": "a47ac10b-58cc-4372-a567-0e02b2c3d485",
+    "orderId": "e47ac10b-58cc-4372-a567-0e02b2c3d481",
+    "productId": "d47ac10b-58cc-4372-a567-0e02b2c3d480",
+    "quantity": 1,
+    "price": 799.99
+  },
+  {
+    "id": "947ac10b-58cc-4372-a567-0e02b2c3d486",
+    "orderId": "c47ac10b-58cc-4372-a567-0e02b2c3d483",
+    "productId": "d47ac10b-58cc-4372-a567-0e02b2c3d480",
+    "quantity": 1,
+    "price": 799.99
+  }
+]
