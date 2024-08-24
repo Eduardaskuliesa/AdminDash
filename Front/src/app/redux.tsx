@@ -9,7 +9,7 @@ import {
 } from "react-redux";
 import globalReducer from "@/state";
 import { authApi } from "@/state/authApi";
-import { productApi } from "@/state/productApi";
+import { dashboardApi} from "@/state/dashboardApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import {
@@ -52,7 +52,7 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   global: globalReducer,
-  [productApi.reducerPath]: productApi.reducer,
+  [dashboardApi.reducerPath]: dashboardApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -66,7 +66,7 @@ export const makeStore = () => {
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(authApi.middleware, productApi.middleware),
+      }).concat(authApi.middleware, dashboardApi.middleware),
   });
 };
 

@@ -1,7 +1,7 @@
 import {
   ExpenseByCategorySummary,
   useGetDashboardMetricsQuery,
-} from "@/state/productApi";
+} from "@/state/dashboardApi";
 import { TrendingUp } from "lucide-react";
 
 import React from "react";
@@ -15,7 +15,10 @@ type ExpenseSummery = {
 const CardExpenseSummary = () => {
   const { data: dashboardMetrics, isLoading } = useGetDashboardMetricsQuery();
 
-  const expenseSummary = dashboardMetrics?.expenseSummary?.length > 0 ? dashboardMetrics.expenseSummary[0] : null;
+  const expenseSummary =
+    dashboardMetrics?.expenseSummary?.length > 0
+      ? dashboardMetrics.expenseSummary[0]
+      : null;
 
   const expenseByCategorySummary =
     dashboardMetrics?.expenseByCategorySummary || [];
@@ -117,9 +120,9 @@ const CardExpenseSummary = () => {
                     </span>
                   </p>
                 </div>
-                 <span className="flex items-center mt-2">
-                    <TrendingUp className="mr-2 text-green-500">30%</TrendingUp>
-                 </span>
+                <span className="flex items-center mt-2">
+                  <TrendingUp className="mr-2 text-green-500">30%</TrendingUp>
+                </span>
                 <div />
               </div>
             )}

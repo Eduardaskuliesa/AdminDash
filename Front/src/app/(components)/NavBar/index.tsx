@@ -1,9 +1,8 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
-import { setIsDarkMode, setIsLoggedIn, setIsSideBarToggled } from "@/state";
+import { setIsSideBarToggled, setIsDarkMode, setIsLoggedIn } from "@/state";
 import Link from "next/link";
 import React from "react";
-import { DiVim } from "react-icons/di";
 
 import {
   LuMenu,

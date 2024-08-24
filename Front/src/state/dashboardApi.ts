@@ -42,9 +42,9 @@ export interface DashboardMetrics {
   expenseByCategorySummary: ExpenseByCategorySummary[];
 }
 
-export const productApi = createApi({
+export const dashboardApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000" }),
-  reducerPath: "productsApi",
+  reducerPath: "dashboardApi",
   tagTypes: ["DashboardMetrics"],
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({
@@ -54,4 +54,4 @@ export const productApi = createApi({
   }),
 });
 
-export const { useGetDashboardMetricsQuery } = productApi;
+export const { useGetDashboardMetricsQuery } = dashboardApi;

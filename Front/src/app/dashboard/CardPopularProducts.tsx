@@ -1,5 +1,5 @@
 "use client";
-import { useGetDashboardMetricsQuery } from "@/state/productApi";
+import { useGetDashboardMetricsQuery } from "@/state/dashboardApi";
 import React from "react";
 import { LuShoppingCart } from "react-icons/lu";
 import Rating from "../(components)/Rating";

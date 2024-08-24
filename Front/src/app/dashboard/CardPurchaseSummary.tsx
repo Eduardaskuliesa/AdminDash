@@ -1,4 +1,4 @@
-import { useGetDashboardMetricsQuery } from "@/state/productApi";
+import { useGetDashboardMetricsQuery } from "@/state/dashboardApi";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import numeral from "numeral";
 import React from "react";
