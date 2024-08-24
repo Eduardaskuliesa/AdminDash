@@ -23,7 +23,7 @@ export interface PurchaseSummary {
 }
 export interface ExpenseSummary {
   expenseSummaryId: string;
-  totalExpense: number;
+  totalExpenses: number;
   date: string;
 }
 
@@ -35,7 +35,7 @@ export interface ExpenseByCategorySummary {
 }
 
 export interface DashboardMetrics {
-  popularProducs: Product[];
+  popularProducts: Product[];
   salesSummary: SalesSummary[];
   purchaseSummary: PurchaseSummary[];
   expenseSummary: ExpenseSummary[];
@@ -43,8 +43,8 @@ export interface DashboardMetrics {
 }
 
 export const productApi = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
-  reducerPath: "productApi",
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000" }),
+  reducerPath: "productsApi",
   tagTypes: ["DashboardMetrics"],
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({

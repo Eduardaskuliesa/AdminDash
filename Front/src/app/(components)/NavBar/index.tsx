@@ -1,8 +1,9 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
-import { setIsLoggedIn, setIsSideBarToggled } from "@/state";
+import { setIsDarkMode, setIsLoggedIn, setIsSideBarToggled } from "@/state";
 import Link from "next/link";
 import React from "react";
+import { DiVim } from "react-icons/di";
 
 import {
   LuMenu,
@@ -11,6 +12,8 @@ import {
   LuSettings,
   LuSearch,
   LuLogOut,
+  LuLogIn,
+  LuMoon,
 } from "react-icons/lu";
 
 export const NavBar = () => {
@@ -20,6 +23,7 @@ export const NavBar = () => {
   );
 
   const isLoggedIn = useAppSelector((state) => state.global.isLoggedIn);
+  const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
   const toggleSideBar = () => {
     dispatch(setIsSideBarToggled(!isSidebarToggled));
@@ -29,8 +33,12 @@ export const NavBar = () => {
     dispatch(setIsLoggedIn(!isLoggedIn));
   };
 
+  const toggleDarkMode = () => {
+    dispatch(setIsDarkMode(!isDarkMode));
+  };
+
   return (
-    <div className="flex justify-between items-center w-full mb-7">
+    <div className="flex transition-colors  justify-between items-center w-full mb-7">
       {/* LEFT SIDE */}
       <div className="flex justify-between items-center gap-5">
         <button
@@ -43,7 +51,7 @@ export const NavBar = () => {
           <input
             type="search"
             placeholder="Start type to search groups & products"
-            className="pl-10 pr-4 text-xs py-2 w-50 md:w-80 border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            className="pl-10 pr-4 text-xs py-2 w-50 md:w-60 border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <LuSearch className="text-gray-500" size={20}></LuSearch>
@@ -52,15 +60,22 @@ export const NavBar = () => {
       </div>
 
       {/* RIGHT SIDE */}
-      {isLoggedIn && (
+      {isLoggedIn ? (
         <div className="flex justify-between items-center gap-5">
           <div className="hidden md:flex justify-between items-center gap-5">
             <div>
-              <button onClick={() => {}}>
-                <LuSun
-                  className="cursor-pointer text-gray-500"
-                  size={24}
-                ></LuSun>
+              <button onClick={toggleDarkMode}>
+                {isDarkMode ? (
+                  <LuSun
+                    className="cursor-pointer text-gray-500"
+                    size={24}
+                  ></LuSun>
+                ) : (
+                  <LuMoon
+                    className="cursor-pointer text-gray-500"
+                    size={24}
+                  ></LuMoon>
+                )}
               </button>
             </div>
             <div className="relative">
@@ -87,6 +102,22 @@ export const NavBar = () => {
               size={24}
             ></LuSettings>
           </Link>
+        </div>
+      ) : (
+        <div className="flex items-center gap-4 pr-[5%]">
+          <Link href="/login">
+            <LuLogIn className="cursor-pointer text-gray-500 text-2xl "></LuLogIn>
+          </Link>
+          <button onClick={toggleDarkMode}>
+            {isDarkMode ? (
+              <LuSun className="cursor-pointer text-gray-500" size={24}></LuSun>
+            ) : (
+              <LuMoon
+                className="cursor-pointer text-gray-500"
+                size={24}
+              ></LuMoon>
+            )}
+          </button>
         </div>
       )}
     </div>

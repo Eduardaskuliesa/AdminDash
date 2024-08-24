@@ -4,13 +4,14 @@ import { FaUser, FaLock, FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 import { useLoginMutation } from "@/state/authApi";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsLoggedIn } from "@/state";
+import { useRouter } from "next/navigation";
 
 export const LoginFormFields = () => {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -32,6 +33,7 @@ export const LoginFormFields = () => {
 
       dispatch(setIsLoggedIn(true));
       console.log("Logged in successfully", result);
+      router.push("/dashboard");
     } catch (error) {
       setErrorMsg("Invalid email or password. Please try again.");
       console.error("Login failed", error);
@@ -70,7 +72,7 @@ export const LoginFormFields = () => {
             id="email"
             required
             placeholder="Your Email"
-            className="w-full border-2 border-gray-300 rounded-lg py-2 md:py-3 px-10 md:px-12 text-base md:text-lg focus:outline-none focus:border-blue-500 transition duration-300"
+            className="w-full border-2 border-gray-300 text-gray-950 rounded-lg py-2 md:py-3 px-10 md:px-12 text-base md:text-lg focus:outline-none focus:border-blue-500 transition duration-300"
           />
         </div>
       </div>
@@ -85,7 +87,7 @@ export const LoginFormFields = () => {
             id="password"
             required
             placeholder="Your Password"
-            className="w-full border-2 border-gray-300 rounded-lg py-2 md:py-3 px-10 md:px-12 text-base md:text-lg focus:outline-none focus:border-blue-500 transition duration-300"
+            className="w-full border-2 border-gray-300 text-gray-950 rounded-lg py-2 md:py-3 px-10 md:px-12 text-base md:text-lg focus:outline-none focus:border-blue-500 transition duration-300"
           />
         </div>
       </div>

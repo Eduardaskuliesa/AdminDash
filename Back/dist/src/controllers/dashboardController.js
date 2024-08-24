@@ -14,7 +14,7 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getDashboardMetrics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const popularProducs = yield prisma.products.findMany({
+        const popularProducts = yield prisma.products.findMany({
             take: 15,
             orderBy: {
                 stockQuantity: "desc",
@@ -46,7 +46,7 @@ const getDashboardMetrics = (req, res) => __awaiter(void 0, void 0, void 0, func
         });
         const expenseByCategorySummary = expenseByCategorySummaryRaw.map((item) => (Object.assign(Object.assign({}, item), { amount: item.amount.toString() })));
         res.json({
-            popularProducs,
+            popularProducts,
             salesSummary,
             purchaseSummary,
             expenseSummary,

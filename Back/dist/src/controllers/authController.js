@@ -65,7 +65,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const validPassword = yield bcrypt_1.default.compare(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ message: "Invalid credentials pass" });
         }
         res.status(200).json({ message: "Logged in successfully" });
     }
