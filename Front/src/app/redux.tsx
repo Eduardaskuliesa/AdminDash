@@ -8,10 +8,10 @@ import {
   Provider,
 } from "react-redux";
 import globalReducer from "@/state";
+import { productApi } from "@/state/productApi";
 import { authApi } from "@/state/authApi";
-import { dashboardApi} from "@/state/dashboardApi";
+import { dashboardApi } from "@/state/dashboardApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
-
 import {
   persistStore,
   persistReducer,
@@ -54,6 +54,7 @@ const rootReducer = combineReducers({
   global: globalReducer,
   [dashboardApi.reducerPath]: dashboardApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  [productApi.reducerPath]: productApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -66,7 +67,11 @@ export const makeStore = () => {
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(authApi.middleware, dashboardApi.middleware),
+      }).concat(
+        authApi.middleware,
+        dashboardApi.middleware,
+        productApi.middleware
+      ),
   });
 };
 

@@ -100,7 +100,7 @@ const SideBar = () => {
           isToggled={isSidebarToggled}
         ></SideBarLink>
         <SideBarLink
-          href="/invenotry"
+          href="/inventory"
           icon={LuArchive}
           label="Inventory"
           isToggled={isSidebarToggled}

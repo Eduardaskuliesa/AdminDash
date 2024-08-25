@@ -5,13 +5,11 @@ import SideBar from "../Sidebar";
 import StoreProvider, { useAppSelector } from "@/app/redux";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-
-  
   const isSidebarToggled = useAppSelector(
     (state) => state.global.isSidebarToggled
   );
 
-  const isDarkMode = useAppSelector((state) => state.global.isSidebarToggled);
+  const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
   useEffect(() => {
     if (isDarkMode) {
