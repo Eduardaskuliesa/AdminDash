@@ -11,7 +11,7 @@ function DataGrid<T extends Record<string, any>>({
   onDelete = () => {},
   withCheckbox = false,
 }: DataGridProps<T>) {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(2);
   const [sortField, setSortField] = useState<keyof T | "">("");
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
@@ -99,7 +99,7 @@ function DataGrid<T extends Record<string, any>>({
   const actionsColumn: Column<T> = {
     field: "actions",
     headerName: "Actions",
-    width: 100,
+    width: 50,
   };
 
   const allColumns = [

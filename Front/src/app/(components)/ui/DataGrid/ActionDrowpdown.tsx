@@ -44,7 +44,7 @@ function ActionsDropdown<T>({
             }}
             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
           >
-            <Edit size={16} className="mr-2" />
+            <Edit size={16} className="mr-2 text-blue-500" />
             Edit
           </button>
           <button
@@ -54,7 +54,7 @@ function ActionsDropdown<T>({
             }}
             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
           >
-            <Trash2 size={16} className="mr-2" />
+            <Trash2 size={16} className="mr-2 text-red-500" />
             Delete
           </button>
         </div>

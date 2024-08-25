@@ -31,9 +31,7 @@ export const getProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const products = await prisma.products.findMany({
-      take: 10,
-    });
+    const products = await prisma.products.findMany();
     res.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);

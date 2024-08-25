@@ -12,7 +12,6 @@ import Header from "../(components)/Inventory/Header";
 import DataGrid from "../(components)/ui/DataGrid/DataGrid";
 
 const colums = [
-  { field: "id", headerName: "Id", width: 50 },
   { field: "name", headerName: "Product Name", width: 100 },
   { field: "categoryId", headerName: "Category", width: 50 },
   { field: "price", headerName: "Price", width: 50 },
@@ -21,22 +20,22 @@ const colums = [
 
 const Inventory = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { data: products, isError, isLoading } = useGetProductsQuery();
 
-  const [updateProduct, { isLoading: isUpdating, isError: isUpdateError }] =
-    useUpdateProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
 
-  const [deleteProduct, { isLoading: isDeleting, isError: isDeleteError }] =
-    useDeleteProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await deleteProduct(id).unwrap();
-      console.log("Delete response:", response);
+      await deleteProduct(id).unwrap();
       setErrorMessage(null);
-      console.log("Product deleted successfully");
+      setSuccessMessage("Deleted successfuly");
     } catch (error) {
+      setSuccessMessage(null);
+      setErrorMessage("Delete failed");
       console.error("Delete error:", error);
     }
   };
@@ -62,12 +61,17 @@ const Inventory = () => {
   return (
     <div className="flex flex-col">
       <Header name="Inventory"></Header>
+      {successMessage && (
+        <div className="text-center text-green-500 py-2">{successMessage}</div>
+      )}
+      {errorMessage && (
+        <div className="text-center text-red-500 py-2">{errorMessage}</div>
+      )}
       <DataGrid
         withCheckbox={true}
         columns={colums}
         onDelete={(id) => handleDelete(id)}
         onEdit={handleEdit}
-        pageSize={20}
         rows={products as any}
       ></DataGrid>
     </div>

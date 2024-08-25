@@ -37,9 +37,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.getProduct = getProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const products = yield prisma.products.findMany({
-            take: 10,
-        });
+        const products = yield prisma.products.findMany();
         res.json(products);
     }
     catch (error) {
