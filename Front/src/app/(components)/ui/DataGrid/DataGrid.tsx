@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Column, DataGridProps, SortDirection } from "./types";
 import SortIcon from "./SortIcon";
 import ActionsDropdown from "./ActionDrowpdown";
@@ -10,60 +10,96 @@ function DataGrid<T extends Record<string, any>>({
   onEdit = () => {},
   onDelete = () => {},
   withCheckbox = false,
+  onSelectionChange = (selectedIds: (string | number)[]) => {},
 }: DataGridProps<T>) {
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(0);
   const [sortField, setSortField] = useState<keyof T | "">("");
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
-
-  const sortedRows = useMemo(() => {
-    if (!sortField || sortDirection === null) return rows;
-    return [...rows].sort((a, b) => {
-      if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
-      if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
-  }, [rows, sortField, sortDirection]);
-
-  const paginatedRows = sortedRows.slice(
-    page * pageSize,
-    (page + 1) * pageSize
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [selectedRows, setSelectedRows] = useState<Set<string | number>>(
+    new Set()
   );
 
   const handleSort = (field: keyof T) => {
     if (field === sortField) {
-      setSortDirection((prev) => {
-        if (prev === "desc") return null;
-        if (prev === "asc") return "desc";
-        return "asc";
-      });
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
-      setSortDirection("desc");
+      setSortDirection("asc");
     }
   };
+
+  const sortedRows = useMemo(() => {
+    if (!sortField) return rows;
+
+    return [...rows].sort((a, b) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+      if (
+        sortField === "price" &&
+        typeof aValue === "string" &&
+        typeof bValue === "string"
+      ) {
+        const aPrice = parseFloat(aValue);
+        const bPrice = parseFloat(bValue);
+        if (isNaN(aPrice) || isNaN(bPrice)) return 0;
+        return sortDirection === "asc" ? aPrice - bPrice : bPrice - aPrice;
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [rows, sortField, sortDirection]);
+
+  const paginatedRows = useMemo(() => {
+    return sortedRows.slice(page * pageSize, (page + 1) * pageSize);
+  }, [sortedRows, page, pageSize]);
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setSelectedRows(
-        new Set(
-          paginatedRows.map((_: any, index: number) => page * pageSize + index)
-        )
-      );
-    } else {
-      setSelectedRows(new Set());
-    }
+    const newSelectedRows = event.target.checked
+      ? new Set(paginatedRows.map((row) => row.id))
+      : new Set<string | number>();
+    setSelectedRows(newSelectedRows);
+    onSelectionChange(Array.from(newSelectedRows));
   };
 
-  const handleSelectRow = (index: number) => {
+  const checkboxColumn: Column<T> = {
+    field: "checkbox",
+    headerName: "",
+    width: 50,
+    renderCell: (_, row: T) => (
+      <input
+        id={row.id}
+        name={row.id}
+        type="checkbox"
+        checked={selectedRows.has(row.id)}
+        onChange={() => handleSelectRow(row.id)}
+        className="form-checkbox h-5 w-5 text-blue-600"
+      />
+    ),
+  };
+
+  const handleSelectRow = (id: string | number) => {
     const newSelectedRows = new Set(selectedRows);
-    if (newSelectedRows.has(index)) {
-      newSelectedRows.delete(index);
+    if (newSelectedRows.has(id)) {
+      newSelectedRows.delete(id);
     } else {
-      newSelectedRows.add(index);
+      newSelectedRows.add(id);
     }
     setSelectedRows(newSelectedRows);
+    onSelectionChange(Array.from(newSelectedRows));
   };
+
+  if (selectedRows.size > 0) {
+    const validIds = new Set(rows.map((row) => row.id));
+    const newSelectedRows = new Set(
+      Array.from(selectedRows).filter((id) => validIds.has(id))
+    );
+    if (newSelectedRows.size !== selectedRows.size) {
+      setSelectedRows(newSelectedRows);
+      onSelectionChange(Array.from(newSelectedRows));
+    }
+  }
 
   const renderCell = (column: Column<T>, row: T, index: number) => {
     if (column.field === "actions") {
@@ -82,20 +118,6 @@ function DataGrid<T extends Record<string, any>>({
     return row[column.field];
   };
 
-  const checkboxColumn: Column<T> = {
-    field: "checkbox",
-    headerName: "",
-    width: 50,
-    renderCell: (_: any, __: any, index: number) => (
-      <input
-        type="checkbox"
-        checked={selectedRows.has(page * pageSize + index)}
-        onChange={() => handleSelectRow(page * pageSize + index)}
-        className="form-checkbox h-5 w-5 text-blue-600"
-      />
-    ),
-  };
-
   const actionsColumn: Column<T> = {
     field: "actions",
     headerName: "Actions",
@@ -104,7 +126,6 @@ function DataGrid<T extends Record<string, any>>({
 
   const allColumns = [
     ...(withCheckbox ? [checkboxColumn] : []),
-
     ...columns,
     actionsColumn,
   ];
@@ -122,6 +143,8 @@ function DataGrid<T extends Record<string, any>>({
               >
                 {column.field === "checkbox" ? (
                   <input
+                    id="checkbox"
+                    name="checkbox"
                     type="checkbox"
                     onChange={handleSelectAll}
                     checked={selectedRows.size === paginatedRows.length}
@@ -130,19 +153,19 @@ function DataGrid<T extends Record<string, any>>({
                 ) : (
                   <div className="flex items-center">
                     <span className="mr-2">{column.headerName}</span>
-                    {column.field !== "rowNumber" &&
-                      column.field !== "actions" && (
-                        <button
-                          onClick={() => handleSort(column.field as keyof T)}
-                          className="p-1 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        >
-                          <SortIcon
-                            direction={
-                              sortField === column.field ? sortDirection : null
-                            }
-                          />
-                        </button>
-                      )}
+                    {(column.field === "price" ||
+                      column.field === "inventory") && (
+                      <button
+                        onClick={() => handleSort(column.field as keyof T)}
+                        className="p-1 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      >
+                        <SortIcon
+                          direction={
+                            sortField === column.field ? sortDirection : null
+                          }
+                        />
+                      </button>
+                    )}
                   </div>
                 )}
               </th>
@@ -152,7 +175,7 @@ function DataGrid<T extends Record<string, any>>({
         <tbody>
           {paginatedRows.map((row: T, index) => (
             <tr
-              key={index}
+              key={row.id || index}
               className="hover:bg-gray-100 transition-colors duration-200"
             >
               {allColumns.map((column) => (

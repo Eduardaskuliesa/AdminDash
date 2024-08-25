@@ -1,5 +1,6 @@
-import React from "react";
-import { MoreVertical, Edit, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { MoreVertical, Edit, Trash2, XCircle, CheckCircle } from "lucide-react";
+import Modal from "../Modal";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsDropdownToggled } from "@/state";
 
@@ -16,15 +17,33 @@ function ActionsDropdown<T>({
   onEdit,
   onDelete,
 }: ActionsDropdownProps<T>) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const dispatch = useAppDispatch();
+
   const isDropdownToggled = useAppSelector(
     (state) => state.global.isDropdownToggled
   );
 
-  const isOpen = isDropdownToggled === rowId;
-
   const toggleDropdown = () => {
     dispatch(setIsDropdownToggled(isOpen ? null : rowId));
+  };
+  const isOpen = isDropdownToggled === rowId;
+
+  const handleDeleteClick = () => {
+    setIsModalOpen(true);
+    setMessage("confirm_delete");
+    dispatch(setIsDropdownToggled(null));
+  };
+
+  const handleConfirmDelete = async () => {
+    onDelete(rowId);
+    setIsModalOpen(false);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setMessage("");
   };
 
   return (
@@ -40,7 +59,6 @@ function ActionsDropdown<T>({
           <button
             onClick={() => {
               onEdit(row);
-              dispatch(setIsDropdownToggled(null));
             }}
             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
           >
@@ -48,10 +66,7 @@ function ActionsDropdown<T>({
             Edit
           </button>
           <button
-            onClick={() => {
-              onDelete(rowId);
-              dispatch(setIsDropdownToggled(null));
-            }}
+            onClick={handleDeleteClick}
             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
           >
             <Trash2 size={16} className="mr-2 text-red-500" />
@@ -59,6 +74,39 @@ function ActionsDropdown<T>({
           </button>
         </div>
       )}
+
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <div className="p-4">
+          {message === "confirm_delete" && (
+            <>
+              <p className="mb-2 text-center font-semibold">
+                Are you sure you want to delete this product?
+              </p>
+              <p className="mb-4 text-center text-sm ">
+                This action cannot be undone.This product will be permanently
+                removed.
+              </p>
+
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={closeModal}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 flex items-center"
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Cancel
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 }

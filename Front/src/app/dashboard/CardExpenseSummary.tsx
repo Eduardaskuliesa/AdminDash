@@ -15,10 +15,7 @@ type ExpenseSummery = {
 const CardExpenseSummary = () => {
   const { data: dashboardMetrics, isLoading } = useGetDashboardMetricsQuery();
 
-  const expenseSummary =
-    dashboardMetrics?.expenseSummary?.length > 0
-      ? dashboardMetrics.expenseSummary[0]
-      : null;
+  const expenseSummary = 2000;
 
   const expenseByCategorySummary =
     dashboardMetrics?.expenseByCategorySummary || [];
@@ -116,7 +113,7 @@ const CardExpenseSummary = () => {
                   <p>
                     Average: {""}
                     <span className="font-semibold">
-                      ${expenseSummary.totalExpenses.toFixed(2)}
+                      ${expenseSummary}
                     </span>
                   </p>
                 </div>

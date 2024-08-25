@@ -7,11 +7,12 @@ export interface Column<T> {
 
 export type SortDirection = "asc" | "desc" | null;
 
-export interface DataGridProps<T> {
+export interface DataGridProps<T extends Record<string, any>> {
   columns: Column<T>[];
   rows: T[];
   pageSize?: number;
-  withCheckbox?: boolean;
   onEdit?: (row: T) => void;
-  onDelete?: (row: T) => void;
+  onDelete?: (id: string | number) => void;
+  withCheckbox?: boolean;
+  onSelectionChange?: (selectedIds: (string | number)[]) => void;
 }
