@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { NavBar } from "../NavBar";
 import SideBar from "../Sidebar";
 import StoreProvider, { useAppSelector } from "@/app/redux";
+import Toast from "../ui/Toast";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const isSidebarToggled = useAppSelector(
@@ -21,7 +22,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div id="modal"></div>
       <div
         className={`flex ${
           isDarkMode ? "dark" : "light"
@@ -34,7 +34,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           } `}
         >
           <NavBar></NavBar>
+          <Toast></Toast>
           {children}
+          <div id="modal"></div>
         </main>
       </div>
     </>

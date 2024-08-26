@@ -28,6 +28,8 @@ const Modal: React.FC<ModalProps> = ({ open, children, className = "", onClose }
     console.error("Modal root element not found");
     return null;
   }
+ 
+  if (!open) return null;
 
   return createPortal(
     <dialog 

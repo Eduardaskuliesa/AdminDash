@@ -1,15 +1,19 @@
 "use client";
 import {
+  Product,
   useDeleteProductMutation,
   useGetProductsQuery,
   useUpdateProductMutation,
 } from "@/state/productApi";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Header from "../(components)/Inventory/Header";
 import DataGrid from "../(components)/ui/DataGrid/DataGrid";
-import ActionComponent from "./ActionComponent";
+import ActionComponent from "../(components)/Inventory/ActionComponent";
+import { addToast } from "@/state/toastSlice";
+import { useAppDispatch } from "../redux";
+import { Column } from "../(components)/ui/DataGrid/types";
 
-const colums = [
+const colums: Column<Product>[] = [
   { field: "id", headerName: "Id", width: 50 },
   { field: "name", headerName: "Product Name", width: 100 },
   { field: "categoryId", headerName: "Category", width: 50 },
@@ -20,15 +24,11 @@ const colums = [
 const Inventory = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
-  useEffect(() => {
-    console.log("Selected Rows ids:", selectedRowIds);
-  }, [selectedRowIds]);
+  const dispatch = useAppDispatch();
 
   const handleSelectionChange = (selectedIds: (string | number)[]) => {
-    console.log("Selection changed in Inventory. New selection:", selectedIds);
     setSelectedRowIds(selectedIds as any);
   };
 
@@ -41,21 +41,45 @@ const Inventory = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteProduct(id).unwrap();
-      setErrorMessage(null);
-      setSuccessMessage("Deleted successfuly");
+      dispatch(
+        addToast({
+          message: `Successfuly deleted product`,
+          type: "success",
+        })
+      );
       setTimeout(() => setSuccessMessage(""), 2000);
     } catch (error) {
       setSuccessMessage(null);
-      setErrorMessage("Delete failed");
+      dispatch(
+        addToast({
+          message: `Unable to delete product`,
+          type: "error",
+        })
+      );
       console.error("Delete error:", error);
     }
   };
 
-  const handleEdit = async ({ id, data }: any) => {
+  const handleEdit = async (
+    id: string,
+    updatedData: Partial<Omit<Product, "id">>
+  ) => {
     try {
-      await updateProduct({ id, data }).unwrap();
+      await updateProduct({ id, data: updatedData }).unwrap();
+      dispatch(
+        addToast({
+          message: `Successfully updated product`,
+          type: "success",
+        })
+      );
     } catch (error) {
-      setErrorMessage("Failed to update product");
+      console.error("Update error:", error);
+      dispatch(
+        addToast({
+          message: `Failed to update product`,
+          type: "error",
+        })
+      );
     }
   };
 
@@ -63,13 +87,20 @@ const Inventory = () => {
     try {
       await Promise.all(selectedRowIds.map((id) => deleteProduct(id).unwrap()));
       setErrorMessage(null);
-      setSuccessMessage(
-        `Deleted ${selectedRowIds.length} products successfully`
+      dispatch(
+        addToast({
+          message: `Successfuly deleted selected ${selectedRowIds.length} product(s)`,
+          type: "success",
+        })
       );
       setSelectedRowIds([]);
     } catch (error) {
-      setSuccessMessage(null);
-      setErrorMessage("Failed to delete selected products");
+      dispatch(
+        addToast({
+          message: `Unable to delete selected product(s)`,
+          type: "error",
+        })
+      );
       console.error("Bulk delete error:", error);
     }
   };
@@ -94,7 +125,7 @@ const Inventory = () => {
           selectedRows={selectedRowIds}
           onDeleteSelected={handleDeleteSelected}
         ></ActionComponent>
-        <div className="flex justify-items-center pl-20">
+        <div className="flex justify-items-center pl-5">
           {successMessage && (
             <div className="text-center text-green-500 py-2 justify-items-center">
               {successMessage}
@@ -106,7 +137,7 @@ const Inventory = () => {
         </div>
       </div>
 
-      <DataGrid
+      <DataGrid<Product>
         withCheckbox={true}
         columns={colums}
         onDelete={(id) => handleDelete(id as string)}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Trash2, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
-import Modal from "../(components)/ui/Modal";
+import Modal from "../ui/Modal";
 import { setIsDropdownToggled } from "@/state";
 
 interface ActionComponentProps {
@@ -15,7 +15,7 @@ const ActionComponent: React.FC<ActionComponentProps> = ({
   onSelectionChange,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [message, setMessage] = useState("");
 
   const handleDeleteSelected = () => {
@@ -24,26 +24,15 @@ const ActionComponent: React.FC<ActionComponentProps> = ({
   };
 
   const confirmDelete = async () => {
-    setIsLoading(true);
     try {
       await onDeleteSelected(selectedRows);
-      setMessage("success");
+      setIsModalOpen(false);
       onSelectionChange([]);
-    } catch (error) {
-      setMessage("error");
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsModalOpen(false);
-        setMessage("");
-      }, 1000);
-    }
+    } catch (error) {}
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setMessage("");
-    setIsLoading(false);
   };
 
   return (
@@ -87,23 +76,6 @@ const ActionComponent: React.FC<ActionComponentProps> = ({
                 </button>
               </div>
             </>
-          )}
-          {isLoading && (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
-          )}
-          {message === "success" && (
-            <div className="flex flex-col items-center">
-              <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-              <p className="text-center">Items deleted successfully</p>
-            </div>
-          )}
-          {message === "error" && (
-            <div className="flex flex-col items-center">
-              <XCircle className="h-12 w-12 text-red-500 mb-4" />
-              <p className="text-center">Error occurred while deleting</p>
-            </div>
           )}
         </div>
       </Modal>

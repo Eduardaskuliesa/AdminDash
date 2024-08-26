@@ -1,9 +1,16 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { Column, DataGridProps, SortDirection } from "./types";
 import SortIcon from "./SortIcon";
 import ActionsDropdown from "./ActionDrowpdown";
+import { Product } from "@/state/productApi";
 
-function DataGrid<T extends Record<string, any>>({
+function DataGrid<T extends Product = Product>({
   columns,
   rows,
   pageSize = 10,
@@ -93,7 +100,7 @@ function DataGrid<T extends Record<string, any>>({
   if (selectedRows.size > 0) {
     const validIds = new Set(rows.map((row) => row.id));
     const newSelectedRows = new Set(
-      Array.from(selectedRows).filter((id) => validIds.has(id))
+      Array.from(selectedRows).filter((id) => validIds.has(id as string))
     );
     if (newSelectedRows.size !== selectedRows.size) {
       setSelectedRows(newSelectedRows);
@@ -101,21 +108,30 @@ function DataGrid<T extends Record<string, any>>({
     }
   }
 
-  const renderCell = (column: Column<T>, row: T, index: number) => {
+  const renderCell = (column: Column<T>, row: T, index: number): ReactNode => {
     if (column.field === "actions") {
       return (
         <ActionsDropdown
           onDelete={() => onDelete(row.id)}
-          onEdit={onEdit}
+          onEdit={(updatedData) => {
+            onEdit?.(row.id, updatedData);
+          }}
           rowId={`row-${row.id || index}`}
           row={row}
         />
       );
     }
+
     if (column.renderCell) {
-      return column.renderCell(row[column.field], row, index);
+      return column.renderCell(row[column.field as keyof T], row, index);
     }
-    return row[column.field];
+
+    if (column.field in row) {
+      const cellValue = row[column.field as keyof T];
+      return cellValue != null ? String(cellValue) : null;
+    }
+
+    return null;
   };
 
   const actionsColumn: Column<T> = {

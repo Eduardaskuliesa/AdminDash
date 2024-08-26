@@ -7,6 +7,7 @@ export interface InitialStateTypes {
   isDropdownToggled: null | string;
 }
 
+
 const initialState: InitialStateTypes = {
   isSidebarToggled: false,
   isDarkMode: false,
